@@ -57,9 +57,10 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+static int kstage = 0 ,view = 0 , count = 0 , count2 = 0;
+static float sum = 0 ;
 /* USER CODE END 0 */
-static int kstage = 0 ,view = 0 , count = 0 , sstage = 0;
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -98,11 +99,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-			
-    /* USER CODE END WHILE */
-				if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET) {
+			if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET) {
 					HAL_Delay(20);
-				
+					HAL_TIM_Base_Start_IT(&htim4);
 				HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_SET);
 				if(kstage){
 					HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10,GPIO_PIN_SET);
@@ -110,7 +109,7 @@ int main(void)
 				}else{
 					
 					HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10,GPIO_PIN_RESET);
-					
+					view = count;
 				}
 				
 			
@@ -125,6 +124,8 @@ int main(void)
 				
 				
 			}
+    /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -180,7 +181,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if(GPIO_Pin == GPIO_PIN_0) {
 			
 				HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10,GPIO_PIN_SET);
-				
+				count2 = count;
+				HAL_TIM_Base_Stop_IT(&htim4);
+				sum = (count2 - view) *1.3392857142857142857143 ;
+				count = 0 ;
 				kstage = 1;
 			
 	}
